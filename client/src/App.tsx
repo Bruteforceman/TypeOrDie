@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import Wordlist from './components/wordlist';
+import Wordlist from './components/Wordlist';
 
 function App() {
   return (
