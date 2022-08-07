@@ -4,12 +4,6 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Play from './pages/Play';
 
-window.addEventListener('keydown', handlekey, true);
-
-function handlekey(e: any){
-  console.log(e);
-}
-
 function App() {
   return (
     <div className="App">
