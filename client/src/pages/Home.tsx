@@ -1,5 +1,4 @@
-import Wordlist from "../components/Wordlist";
-import {Routes, Route, useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function PlayButton(): JSX.Element {
     const navigate = useNavigate();
