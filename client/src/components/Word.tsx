@@ -1,12 +1,10 @@
-import { FC } from "react";
-
 import "./Word.css"
 
-interface Something {
+interface Prop {
     str: string
 }
 
-const Word: FC<Something> = (prop): JSX.Element => {
+const Word = (prop: Prop): JSX.Element => {
     return <>
         <h2>{prop.str}</h2>
     </>
