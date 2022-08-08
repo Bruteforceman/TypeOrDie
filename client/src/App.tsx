@@ -3,6 +3,7 @@ import './App.css';
 import Home from './pages/Home';
 import About from './pages/About';
 import Play from './pages/Play';
+import CanvasGame from './pages/CanvasGame';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path='/' element={ <Home/> } />
         <Route path='about' element={ <About /> } />
         <Route path='play' element={ <Play /> } />
+        <Route path='canvas' element={ <CanvasGame /> } />
       </Routes>
     </div>
   );
