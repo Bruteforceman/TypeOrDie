@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import data from "../components/data";
 import "./CanvasGame.css";
 
-const height = window.innerHeight; // Math.floor(window.innerHeight / 2);
-const width  = window.innerWidth; // Math.floor(window.innerWidth / 2);
+const height = Math.max(window.innerHeight - 100, 500); // Math.floor(window.innerHeight / 2);
+const width  = Math.max(window.innerWidth - 100, 500); // Math.floor(window.innerWidth / 2);
 
 class Player {
     posX : number;    
@@ -54,6 +54,10 @@ class Enemy {
     }
     move(dy : number) {
         this.posY -= dy;
+    }
+
+    getWidth(context : CanvasRenderingContext2D) {
+        return context.measureText(this.word).width;
     }
 
     // draw the typed part in rgb(163, 190, 140) and the untyped part in black
@@ -107,8 +111,27 @@ function addRandomEnemy(enemies: Enemy[], context: CanvasRenderingContext2D): vo
     enemies.push(new Enemy(data[idx], posX));
 }
 
+function targetEnemy(player: Player, 
+                     enemies: Enemy[], 
+                     context : CanvasRenderingContext2D) : Enemy | null {
+                    
+    const inRange = enemies.filter((enemy) => {
+        const enemyLeftX = enemy.posX;
+        const enemyRightX = enemy.posX + enemy.getWidth(context);
+        const playerLeftX = player.posX;
+        const playerRightX = player.posX + player.width;
+
+        if(enemyRightX <= playerLeftX || playerRightX <= enemyLeftX) {
+            return false;
+        } else {
+            return true;
+        }
+    });
+    return inRange.length > 0 ? inRange[0] : null; // inRange[0] gives us closest enemy inside the range
+}
+
 function initGame(context: CanvasRenderingContext2D) : () => void {
-    let enemies = [new Enemy('lmfao', 30)];
+    let enemies = [] as Enemy[];
     const player = new Player(0); // creates a player in the corner
     const playerSpeed = 14;
     const enemySpeed = 1;
@@ -123,9 +146,14 @@ function initGame(context: CanvasRenderingContext2D) : () => void {
             // for(const enemy of enemies) {
             //     enemy.shoot(e.key);
             // }
-            
-            // This only removes it from the first enemy
-            enemies[0].shoot(e.key);
+                        
+            // implement logic for finding the target enemy inside this function
+            // initially it was enemies[0]
+
+            const targetedEnemy = targetEnemy(player, enemies, context);
+            if(targetedEnemy !== null) {
+                targetedEnemy.shoot(e.key);
+            }
         }
     }
 
@@ -136,9 +164,13 @@ function initGame(context: CanvasRenderingContext2D) : () => void {
         // mutableFilter(enemies, (enemy) => !enemy.isDead());
 
         // draw the current enemy in black
-        const [head, ...tail] = enemies
-        head.move(-enemySpeed)
-        head.draw(context, 'black')
+        const head = targetEnemy(player, enemies, context);
+        const tail = enemies.filter((enemy) => enemy !== head);
+        
+        if(head !== null) {
+            head.move(-enemySpeed)
+            head.draw(context, 'black')
+        }
         // and the rest in gray
         for(const enemy of tail) {
             enemy.move(-enemySpeed);
