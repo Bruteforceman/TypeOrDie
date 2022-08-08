@@ -100,6 +100,9 @@ class Enemy {
 
 // Adds a random enemy that fits within the game box
 function addRandomEnemy(enemies: Enemy[], context: CanvasRenderingContext2D): void {
+    if(document.hidden) {
+        return ; // makes sure we don't add words when the tab is inactive
+    }
     const idx = Math.floor(Math.random() * data.length); 
     const word = data[idx];
     const wordWidth = context.measureText(word).width;
@@ -158,6 +161,9 @@ function initGame(context: CanvasRenderingContext2D) : () => void {
     }
 
     const animate = () => {
+        if(document.hidden) {
+            return ; // makes sure we don't render the game if the tab is closed
+        }
         context.clearRect(0, 0, width, height);
         player.draw(context);
         enemies = enemies.filter((enemy) => !enemy.isDead());
@@ -184,7 +190,7 @@ function initGame(context: CanvasRenderingContext2D) : () => void {
     const animationTimer = setInterval(animate, 30);
 
     // lower enemyTimer => quicker enemy spawn
-    const enemyTimer = setInterval(() => addRandomEnemy(enemies, context), 1000);
+    const enemyTimer = setInterval(() => addRandomEnemy(enemies, context), 2000);
 
     window.addEventListener('keydown', keyHandler);
 
