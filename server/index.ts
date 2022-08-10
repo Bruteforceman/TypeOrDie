@@ -1,41 +1,33 @@
-import express, { Express, Request, Response } from 'express';
+import express, { json } from 'express';
 import dotenv from 'dotenv';
-import { ConnectOptions, Mongoose } from 'mongoose';
+import { connect } from 'mongoose';
+import router from "./api";
+dotenv.config();  // imports .env configs
 
-dotenv.config();
-
-const app: Express = express();
+const app = express();
 const port = process.env.PORT;
-const mongoose = new Mongoose();
-
 
 // this should go into process.ENV
 const dbUser = process.env.DB_USER as string;
 const dbPassword = process.env.DB_PASSWORD as string;
 
-const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.cvhon.mongodb.net/?retryWrites=true&w=majority`;
 const dbName = 'TypeOrDie';
+const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.cvhon.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
-mongoose.connect(mongoURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: dbName
-} as ConnectOptions).then(() => {
+connect(mongoURI).then(() => {
   console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.log(`Error connecting to MongoDB: ${err}`);
-});
-
+}).catch(err => console.log(err));
 
 // note: the URL should start with http, not https
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({
-    'name': 'tasmeem reza',
-    'school': 'ndc college',
-  });
+app.get('/', (req, res) => {
+  res.send('Welcome to TypeOrDie')
 });
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
+
+app.use('/api', router);
+app.use(json());
+
