@@ -1,6 +1,6 @@
 import data from "./data";
 import Word from "./Word";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface FuncProps {
     handleNextWord(arg : string) : void
@@ -10,7 +10,12 @@ const Wordlist = (fprop: FuncProps): JSX.Element => {
 
     const [ currArray, setArray ] = useState(data);
 
-    window.addEventListener('keydown', handlekey, true);
+    useEffect(() => {
+        document.body.addEventListener('keydown', handlekey, true);
+        return () => {
+            document.body.removeEventListener('keydown', handlekey, true);
+        }
+    })
 
     function handlekey(e: any){
         if(e.key==="Enter"){
