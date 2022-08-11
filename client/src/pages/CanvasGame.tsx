@@ -13,6 +13,7 @@ class Bullet {
     from: Player;
     to: Enemy;
     letter: string;
+    dist: number;
 
     constructor(from: Player, to: Enemy, letter: string) {
         this.posX = from.posX;
@@ -20,16 +21,25 @@ class Bullet {
         this.from = from;
         this.to = to;
         this.letter = letter;
+
+        const distX = this.to.curLetterX - this.posX
+        const distY = this.to.posY - this.posY 
+        this.dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2))
     }
 
     move() {
         const distX = this.to.curLetterX - this.posX
         const distY = this.to.posY - this.posY 
-        const dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2))
-        const dx = 5 * distX / dist
-        const dy = 5 * distY / dist
+        this.dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2))
+        const dx = 30 * distX / this.dist
+        const dy = 30 * distY / this.dist
         this.posX += dx; // some more checks but later
-        this.posY += dy;
+        if (this.posY + dy < this.to.posY) {
+            this.dist = 0
+        }
+        else {
+            this.posY += dy;
+        }
     }
 
     draw(context: CanvasRenderingContext2D) {
@@ -38,8 +48,7 @@ class Bullet {
     }
 
     isShot(): boolean {
-        return this.to.isDead() || 
-            (this.posX - this.to.curLetterX) + (this.posY - this.to.posY) < 1
+        return this.to.isDead() || this.dist < 15
     }
 }
 
@@ -73,6 +82,8 @@ class Enemy {
     posY = 30;
     curLetterX: number;
     bullets = [] as Bullet[];
+    prot = false;
+    protStart = Date.now();
 
     constructor(word: string, posX: number) {
         this.cur = word;
@@ -91,6 +102,9 @@ class Enemy {
         else {
             this.typed = ""
             this.cur = this.word
+            this.bullets = [] as Bullet[]
+            this.prot = true;
+            this.protStart = Date.now();
         }
     }
     move(dy: number) {
@@ -99,7 +113,7 @@ class Enemy {
 
     getShot(){
         for (const bullet of this.bullets) {
-            if (bullet.isShot())
+            if (bullet.isShot() && !this.prot)
                 this.shoot(bullet.letter)
         }
         this.bullets = this.bullets.filter((bullet) => !bullet.isShot())
@@ -115,7 +129,7 @@ class Enemy {
 
     // draw the typed part in rgb(163, 190, 140) and the untyped part in black
     texter(ctx: CanvasRenderingContext2D, left: string,
-        right: string, x: number, y: number, curColor: string) {
+        right: string, x: number, y: number, curColor: string): number {
         for (let i = 0; i <= left.length; ++i) {
             const ch = left.charAt(i);
             ctx.fillStyle = 'rgb(163, 190, 140)';
@@ -129,16 +143,27 @@ class Enemy {
             ctx.fillText(ch, x, y);
             x += ctx.measureText(ch).width;
         }
+        return x;
     }
 
     draw(context: CanvasRenderingContext2D, color: string = 'rgb(169,169,169)') {
         context.font = '35px monospace';
-        this.texter(context, this.typed, this.cur, this.posX, this.posY, color);
-
-        for (const bullet of this.bullets) {
-            bullet.move();
-            bullet.draw(context);
+        if (this.prot) {
+            const x = 
+                this.texter(context, this.typed, this.cur, this.posX, this.posY, color);
+            context.fillStyle = "rgba(129, 161, 193, 0.4)"
+            context.fillRect(this.posX - 5, this.posY - 35, x - this.posX + 10, 50)
         }
+        else {
+            this.texter(context, this.typed, this.cur, this.posX, this.posY, color);
+            for (const bullet of this.bullets) {
+                bullet.move();
+                bullet.draw(context);
+            }
+        }
+
+        if (this.prot && Date.now() > this.protStart + 500)
+            this.prot = false;
     }
 
     // word has been correctly typed by the player, or the word has gone beyond the
