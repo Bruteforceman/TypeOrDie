@@ -23,8 +23,11 @@ class Bullet {
     }
 
     move() {
-        const dx = (this.to.posX - this.from.posX) / 10
-        const dy = (this.to.posY - this.from.posY) / 10
+        const distX = this.to.curLetterX - this.posX
+        const distY = this.to.posY - this.posY 
+        const dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2))
+        const dx = 5 * distX / dist
+        const dy = 5 * distY / dist
         this.posX += dx; // some more checks but later
         this.posY += dy;
     }
@@ -35,7 +38,8 @@ class Bullet {
     }
 
     isShot(): boolean {
-        return this.to.isDead() || (this.posX - this.to.posX) + (this.posY - this.to.posY) < 5
+        return this.to.isDead() || 
+            (this.posX - this.to.curLetterX) + (this.posY - this.to.posY) < 1
     }
 }
 
@@ -67,12 +71,15 @@ class Enemy {
     cur: string;
     posX: number;
     posY = 30;
+    curLetterX: number;
+    bullets = [] as Bullet[];
 
     constructor(word: string, posX: number) {
         this.cur = word;
         this.word = word;
         this.typed = "";
         this.posX = posX;
+        this.curLetterX = posX;
     }
     // As the player types, cut off parts of the word
     // If player mistypes a letter, the word respawns
@@ -90,8 +97,20 @@ class Enemy {
         this.posY -= dy;
     }
 
+    getShot(){
+        for (const bullet of this.bullets) {
+            if (bullet.isShot())
+                this.shoot(bullet.letter)
+        }
+        this.bullets = this.bullets.filter((bullet) => !bullet.isShot())
+    }
+
     getWidth(context: CanvasRenderingContext2D) {
         return context.measureText(this.word).width;
+    }
+
+    shot(bullet: Bullet) {
+        this.bullets.push(bullet)
     }
 
     // draw the typed part in rgb(163, 190, 140) and the untyped part in black
@@ -103,6 +122,7 @@ class Enemy {
             ctx.fillText(ch, x, y);
             x += ctx.measureText(ch).width;
         }
+        this.curLetterX = x;
         for (let i = 0; i <= right.length; ++i) {
             const ch = right.charAt(i);
             ctx.fillStyle = curColor;
@@ -114,6 +134,11 @@ class Enemy {
     draw(context: CanvasRenderingContext2D, color: string = 'rgb(169,169,169)') {
         context.font = '35px monospace';
         this.texter(context, this.typed, this.cur, this.posX, this.posY, color);
+
+        for (const bullet of this.bullets) {
+            bullet.move();
+            bullet.draw(context);
+        }
     }
 
     // word has been correctly typed by the player, or the word has gone beyond the
@@ -172,7 +197,7 @@ function targetEnemy(player: Player,
 
 function initGame(context: CanvasRenderingContext2D): () => void {
     let enemies = [] as Enemy[];
-    let bullets = [] as Bullet[];
+    // let bullets = [] as Bullet[];
     const player = new Player(0); // creates a player in the corner
     const playerSpeed = 14;
     const enemySpeed = 1;
@@ -193,8 +218,7 @@ function initGame(context: CanvasRenderingContext2D): () => void {
 
             const targetedEnemy = targetEnemy(player, enemies, context);
             if (targetedEnemy !== null) {
-                targetedEnemy.shoot(e.key);
-                bullets.push(new Bullet(player, targetedEnemy, e.key));
+                targetedEnemy.shot(new Bullet(player, targetedEnemy, e.key));
             }
         }
     }
@@ -206,7 +230,7 @@ function initGame(context: CanvasRenderingContext2D): () => void {
         context.clearRect(0, 0, width, height);
         player.draw(context);
         enemies = enemies.filter((enemy) => !enemy.isDead());
-        bullets = bullets.filter((bullet) => !bullet.isShot());
+        // bullets = bullets.filter((bullet) => !bullet.isShot());
         // mutableFilter(enemies, (enemy) => !enemy.isDead());
 
         // draw the current enemy in black
@@ -216,15 +240,12 @@ function initGame(context: CanvasRenderingContext2D): () => void {
         if (head !== null) {
             head.move(-enemySpeed)
             head.draw(context, 'black')
+            head.getShot()
         }
         // and the rest in gray
         for (const enemy of tail) {
             enemy.move(-enemySpeed);
             enemy.draw(context);
-        }
-        for (const bullet of bullets) {
-            bullet.move();
-            bullet.draw(context);
         }
     }
 
