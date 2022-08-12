@@ -1,6 +1,6 @@
 import Wordlist from "../components/Wordlist";
 import { useState } from 'react';
-import data from "../components/data";
+import data from "../components/Data";
 
 function Play() : JSX.Element {
 

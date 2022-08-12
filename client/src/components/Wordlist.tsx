@@ -1,4 +1,4 @@
-import data from "./data";
+import data from "./Data";
 import Word from "./Word";
 import { useState, useEffect } from 'react';
 
