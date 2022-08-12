@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import data from "../components/data";
+import data from "../components/Data";
 import "./CanvasGame.css";
 
 const height = Math.max(window.innerHeight - 100, 500);
