@@ -1,27 +1,20 @@
 import { Router } from "express";
+import { ensureLoggedIn, loginUser, logoutUser, registerUser } from "./auth";
 import User from "./models/user";
 const router = Router(); // not sure what exactly this does
 
+// only for testing purposes, must remove it later
 router.get('/getusers', (req, res) => {
-    User.find({}).then((users) => { // finds all users
-        res.json(users);
-    }).catch(err => {
-        res.status(400).send(err); // sends a 400 bad request error, maybe there are better error codes for this
-    });
+    User.find({}).then((users) => res.json(users));
 });
 
-router.post('/adduser', (req, res) => {
-    const user = new User({
-        name: req.body.name,
-        email: req.body.email,
-        avatar: req.body?.avatar // optional field
-    });
-    user.save().then(() => {
-        res.send('New user added successfully');
-    }).catch(err => {
-        res.status(400).send(err);
-    });
-});
-
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.post('/logout', logoutUser);
+router.get('/whoami', ensureLoggedIn, (req, res) => {
+    // it is guaranteed someone is logged in
+    const username = req.session.username as string;
+    res.send(`${username}@gmail.com`);
+})
 
 export default router;

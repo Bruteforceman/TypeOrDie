@@ -1,0 +1,30 @@
+GET http://localhost:8080/api/getusers
+
+###
+POST http://localhost:8080/api/register
+Content-Type: application/json
+
+{
+    "username": "tasmeem1",
+    "email": "t1@gmail.com",
+    "password": "pwd1"
+}
+
+###
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+    "username": "tasmeem1",
+    "password": "pwd1"
+}
+
+###
+POST http://localhost:8080/api/logout 
+
+
+###
+GET http://localhost:8080/api/whoami
+
+###
+GET http://localhost:8080/api/email
