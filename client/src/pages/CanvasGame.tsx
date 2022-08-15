@@ -121,6 +121,9 @@ class Enemy {
     // As the player types, cut off parts of the word
     // If player mistypes a letter, the word respawns
     shoot(letter: string) {
+        if(this.startDeath()) {
+            return ;
+        }
         if (this.cur[0].toLowerCase() === letter.toLowerCase()) {
             this.typed += this.cur[0]
             this.cur = this.cur.slice(1);
@@ -181,7 +184,7 @@ class Enemy {
         // check for death conditions
         if(this.startDeath()) {
             this.deathCounter += 1;
-            const src = Math.floor(this.deathCounter / 6);
+            const src = Math.min(this.explosionImages.length - 1, Math.floor(this.deathCounter / 6));
             context.drawImage(this.explosionImages[src] as CanvasImageSource, this.posX, this.posY, this.imageWidth, this.imageHeight);
             return ;
         }
