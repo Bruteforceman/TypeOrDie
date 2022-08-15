@@ -1,21 +1,21 @@
-import { useNavigate } from 'react-router-dom';
-
-function PlayButton(): JSX.Element {
-    const navigate = useNavigate();
-    return (
-        <>
-            <h1> Welcome to TypeOrDie </h1>
-
-            <button className="playButton" 
-                onClick={() => navigate('/play')}>
-             Play!
-            </button>
-        </>
-    );
-}
+import { Link } from 'react-router-dom';
+import Background from '../components/Background';
+import "./Home.css";
 
 function Home() : JSX.Element {
-    return <PlayButton />
+    return (
+        <>
+            <Background />
+            <div className="bar">
+                <h3><Link to='/authenticate'> REGISTER </Link></h3>
+                <h3><Link to='/authenticate'> LOGIN </Link></h3>
+                <h3><Link to='/canvas'> PLAY </Link></h3>
+            </div>
+            <div className="title">
+                <h1> TypeOrDie </h1>
+            </div>               
+        </>
+    );
 }
 
 export default Home;

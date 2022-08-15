@@ -306,11 +306,11 @@ function CanvasGame(): JSX.Element {
         return () => {};
     }, []);
     return (
-        <div className="canvas-container">
+        <>
             <canvas id={"game"} height={height} width={width}>
                 Sorry, canvas is not supported in your browser.
-            </canvas>
-        </div>
+            </canvas>        
+        </>
     );
 }
 

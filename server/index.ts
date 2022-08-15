@@ -33,8 +33,8 @@ app.use(json());
 app.use(session(
   {
     secret: process.env.SESSION_SECRET as string,
-    resave: false,
-    saveUninitialized: false
+    resave: true,
+    saveUninitialized: true
   }
 ));
 

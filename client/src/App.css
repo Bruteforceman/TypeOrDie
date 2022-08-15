@@ -1,3 +1,27 @@
+
+@font-face {
+  font-family: 'CCOverbyteOffW00';
+  src: url('./fonts/CCOverbyteOffW00-Regular.eot');
+  src: local('CCOverbyteOff W00 Regular'), local('CCOverbyteOffW00-Regular'),
+      url('./fonts/CCOverbyteOffW00-Regular.eot?#iefix') format('embedded-opentype'),
+      url('./fonts/CCOverbyteOffW00-Regular.woff2') format('woff2'),
+      url('./fonts/CCOverbyteOffW00-Regular.woff') format('woff'),
+      url('./fonts/CCOverbyteOffW00-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'CCOverbyteOn';
+  src: url('./fonts/CCOverbyteOn.eot');
+  src: local('☞CCOverbyteOn'), local('CCOverbyteOn'),
+      url('./fonts/CCOverbyteOn.eot?#iefix') format('embedded-opentype'),
+      url('./fonts/CCOverbyteOn.woff2') format('woff2'),
+      url('./fonts/CCOverbyteOn.woff') format('woff'),
+      url('./fonts/CCOverbyteOn.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .App {
   text-align: center;
 }

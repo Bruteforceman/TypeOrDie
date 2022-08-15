@@ -27,4 +27,4 @@ POST http://localhost:8080/api/logout
 GET http://localhost:8080/api/whoami
 
 ###
-GET http://localhost:8080/api/email
+POST http://localhost:8080/api/logout

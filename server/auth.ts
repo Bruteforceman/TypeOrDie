@@ -19,10 +19,10 @@ export async function registerUser(req : Request, res : Response) {
     const hashedPassword = await hash(password, 5); // 5 is the number of salt rounds
 
     if (await User.exists({ username: username }) !== null) {
-        return res.status(403).send('Username already exists');
+        return res.json({ success: false, message: 'Username already exists' });
     }
     if (await User.exists({ email : email }) !== null) {
-        return res.status(403).send('Another account with the same email already exists');
+        return res.json({ success: false, message: 'Another account with the same email already exists' });
     }
     const newUser = new User ({
         username: username,
@@ -31,7 +31,7 @@ export async function registerUser(req : Request, res : Response) {
     });
     newUser.save().then(() => {
         req.session.username = username;
-        res.send('New user successfully registered');
+        res.json({ success: true, message: 'New user successfully registered' });
     });
 }
 export async function loginUser(req : Request, res : Response) {
@@ -40,22 +40,22 @@ export async function loginUser(req : Request, res : Response) {
     const user = await User.findOne({ username: username });
     if(user !== null && await compare(password, user.password)) {
         req.session.username = user.username;
-        res.send('User successfully authenticated');
+        res.json({ success: true, message: 'User successfully authenticated' });
     } else {
         req.session.username = null;
-        res.status(403).send(`Username and password don't match`);
+        res.json({ success: false, message: `Username and password don't match` });
     }
 }
 
 export function logoutUser(req : Request, res : Response) {
     req.session.username = null;
-    res.send(`User logged out`);
+    res.json({ success: true, message: 'Logged out' })
 }
 
 export function ensureLoggedIn(req : Request, res : Response, next : NextFunction) {
     if(req.session.username != null) { // checks for both null and undefined
         next();
     } else {
-        res.status(403).send('You must be logged in to access this page');
+        res.json({ success: false, message: 'You must be logged in to access this page' });
     }
 }
