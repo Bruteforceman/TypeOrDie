@@ -134,6 +134,9 @@ class Enemy {
     // As the player types, cut off parts of the word
     // If player mistypes a letter, the word respawns
     shoot(letter: string) {
+        if (this.startDeath()) {
+            return;
+        }
         if (this.cur[0].toLowerCase() === letter.toLowerCase()) {
             if (this.typed === "")
                 this.startedTyping = true
@@ -207,7 +210,8 @@ class Enemy {
         // check for death conditions
         if (this.startDeath()) {
             this.deathCounter += 1;
-            const src = Math.floor(this.deathCounter / 6);
+            const src = Math.min(this.explosionImages.length - 1,
+                Math.floor(this.deathCounter / 6));
             const posX = this.posX +
                 this.getWidth(context) / 2 - this.imageWidth / 2;
 
@@ -216,13 +220,14 @@ class Enemy {
                 posX, this.posY, this.imageWidth, this.imageHeight
             );
 
+
             const scr = this.score();
             if (scr > 0) {
                 context.fillStyle = 'rgb(163, 190, 140)';
-                context.fillText("+" + scr.toString(), posX+30, this.posY);
+                context.fillText("+" + scr.toString(), posX + 30, this.posY);
             }
-            else 
-                context.fillText(scr.toString(), posX+30, this.posY);
+            else
+                context.fillText(scr.toString(), posX + 30, this.posY);
             return;
         }
         context.font = '20px CCOverbyteOn';
