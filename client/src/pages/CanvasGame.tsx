@@ -11,7 +11,7 @@ class Bullet {
     posX: number;
     posY: number;
     width = 10;
-    height = this.width;
+    height = 10;
     from: Player;
     to: Enemy;
     letter: string;
@@ -19,7 +19,7 @@ class Bullet {
 
 
     constructor(from: Player, to: Enemy, letter: string) {
-        this.posX = from.posX + 50;
+        this.posX = Math.floor(from.posX + from.width / 2);
         this.posY = from.posY;
         this.from = from;
         this.to = to;
@@ -100,7 +100,7 @@ class Enemy {
     curLetterX: number;
     bullets = [] as Bullet[];
     protBuffer = 0;
-    protStart = Date.now();
+    // protStart = Date.now();
 
     startedTyping = false;
     typedFor = 0;
@@ -151,7 +151,7 @@ class Enemy {
 
             this.bullets = [] as Bullet[]
             this.protBuffer = 30;
-            this.protStart = Date.now();
+            // this.protStart = Date.now();
 
             this.startedTyping = false;
             this.typedFor = 0;
@@ -164,7 +164,7 @@ class Enemy {
 
     getShot() {
         for (const bullet of this.bullets) {
-            if (bullet.isShot() && !this.protBuffer)
+            if (bullet.isShot() && this.protBuffer === 0)
                 this.shoot(bullet.letter)
         }
         this.bullets = this.bullets.filter((bullet) => !bullet.isShot())
@@ -230,6 +230,7 @@ class Enemy {
                 context.fillText(scr.toString(), posX + 30, this.posY);
             return;
         }
+        this.getShot();
         context.font = '20px CCOverbyteOn';
         if (this.protBuffer > 0) {
             // const x = 
@@ -415,7 +416,6 @@ function initGame(context: CanvasRenderingContext2D): () => void {
         if (head !== null) {
             head.move(-enemySpeed)
             head.draw(context, 'crimson') // pass in the color of targeted enemy
-            head.getShot()
         }
         // and the rest in gray
         for (const enemy of tail) {
