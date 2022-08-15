@@ -361,9 +361,9 @@ function initGame(context: CanvasRenderingContext2D): () => void {
         img.src = url;
         playerSprite.push(img);
     }
-    for (let i = 0; i < 4; i++) {
+    for (let i = 1; i < 5; i++) {
         const url =
-            process.env.PUBLIC_URL + `enemy_sprite/frame_${i}_delay-0.1s.png`;
+            process.env.PUBLIC_URL + `enemy_sprite/asteroid_${i}.png`;
         const img = new Image();
         img.src = url;
         enemySprite.push(img);
