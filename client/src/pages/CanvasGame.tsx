@@ -16,6 +16,7 @@ class Bullet {
     letter: string;
     dist: number;
 
+
     constructor(from: Player, to: Enemy, letter: string) {
         this.posX = from.posX;
         this.posY = from.posY;
@@ -49,7 +50,7 @@ class Bullet {
     }
 
     isShot(): boolean {
-        return this.to.isDead() || this.dist < 15
+        return this.to.isDead() || this.dist < 15 || this.to.posY > this.posY;
     }
 }
 
@@ -105,6 +106,7 @@ class Enemy {
     imageWidth = 50;
 
     deathBuffer = 30; // shows explosion for 30 iterations at death
+    deathCounter = 0;
     explosionImages : HTMLElement [];
 
     constructor(word: string, posX: number, images : HTMLElement [], explosionImages : HTMLElement []) {
@@ -143,6 +145,11 @@ class Enemy {
         this.bullets = this.bullets.filter((bullet) => !bullet.isShot())
     }
 
+    getHeight(context : CanvasRenderingContext2D) {
+        // 20 px font, 10 px gap between, then height of the image
+        return 20 + 10 + this.imageHeight; 
+    }
+
     getWidth(context: CanvasRenderingContext2D) {
         return context.measureText(this.word).width;
     }
@@ -171,14 +178,11 @@ class Enemy {
     }
 
     draw(context: CanvasRenderingContext2D, color: string = 'aliceblue') {
-
         // check for death conditions
-        if(this.cur.length === 0 || this.posY >= height - 200) {
-            this.deathBuffer -= 1;
-            const src = Math.floor((30 - this.deathBuffer) / 6);
-            if(src >= 0) {
-                context.drawImage(this.explosionImages[src] as CanvasImageSource, this.posX, this.posY, this.imageWidth, this.imageHeight);
-            }
+        if(this.startDeath()) {
+            this.deathCounter += 1;
+            const src = Math.floor(this.deathCounter / 6);
+            context.drawImage(this.explosionImages[src] as CanvasImageSource, this.posX, this.posY, this.imageWidth, this.imageHeight);
             return ;
         }
         context.font = '20px CCOverbyteOn';
@@ -209,11 +213,13 @@ class Enemy {
             this.curImage = 0;
         }
     }
-
     // word has been correctly typed by the player, or the word has gone beyond the
     // boundary
+    startDeath(): boolean {
+        return this.cur.length === 0 || this.posY >= height - 200;
+    }
     isDead(): boolean {
-        return this.deathBuffer <= 0;
+        return this.deathCounter >= this.deathBuffer;
     }
 }
 
@@ -227,10 +233,31 @@ function addRandomEnemy(enemies: Enemy[], context: CanvasRenderingContext2D, ene
     const wordWidth = context.measureText(word).width;
     let posX = Math.floor(Math.random() * width);
 
-    while (posX + wordWidth > width - 10 || posX < 10)
+    while (posX + wordWidth > width - 10 || posX < 10) {
         posX = Math.floor(Math.random() * width);
+    }
+    const newEnemy = new Enemy(data[idx], posX, enemySprite, explosionSprite);
 
-    enemies.push(new Enemy(data[idx], posX, enemySprite, explosionSprite));
+    const buffer = 20;
+    const lx = newEnemy.posX - buffer;
+    const rx = newEnemy.posX + newEnemy.getWidth(context) + buffer;
+    const ly = newEnemy.posY - buffer;
+    const ry = newEnemy.posY + newEnemy.getHeight(context) + buffer;
+
+    const closeEnemies = enemies.filter(enemy => {
+        const elx = enemy.posX;
+        const erx = enemy.posX + enemy.getWidth(context);
+        const ely = enemy.posY;
+        const ery = enemy.posY + enemy.getHeight(context);
+        
+        if(Math.max(lx, elx) < Math.min(rx, erx) && Math.max(ly, ely) < Math.min(ry, ery)) {
+            return true;
+        }
+        return false;
+    });
+    if(closeEnemies.length === 0) {
+        enemies.push(newEnemy);
+    }
 }
 
 
@@ -258,7 +285,8 @@ function initGame(context: CanvasRenderingContext2D): () => void {
     const playerSprite = [] as HTMLElement [];
     const enemySprite = [] as HTMLElement [];
     const explosionSprite = [] as HTMLElement [];
-    
+
+    // Loads all the sprites
     for(let i = 0; i < 4; i++) {
         const url = process.env.PUBLIC_URL + `player_sprite/frame_${i}_delay-0.1s.png`;
         const img = new Image();
@@ -277,6 +305,7 @@ function initGame(context: CanvasRenderingContext2D): () => void {
         img.src = url;
         explosionSprite.push(img);
     } 
+    // end loading
 
     let enemies = [] as Enemy[];
     // let bullets = [] as Bullet[];
