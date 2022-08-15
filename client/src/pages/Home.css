@@ -12,10 +12,10 @@
     color: aliceblue;
 }
 
-.bar, .bar * {
-    border: 1px solid black;
-}
 .bar {
+    position: fixed;
+    top: 0;
+    left: 0;
     color: aliceblue;
     text-align: left;
     padding-left: 8em;
@@ -36,7 +36,7 @@
     content: '';
     position: absolute;
     width: 100%;
-    height: 4px;
+    height: 1px;
     border-radius: 4px;
     background-color: aliceblue;
     bottom: 0;

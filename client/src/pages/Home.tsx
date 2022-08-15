@@ -7,10 +7,11 @@ function Home() : JSX.Element {
         <>
             <Background />
             <div className="bar">
-                <h3><Link to='/authenticate'> REGISTER </Link></h3>
-                <h3><Link to='/authenticate'> LOGIN </Link></h3>
-                <h3><Link to='/canvas'> PLAY </Link></h3>
+                <h3><Link to='/authenticate'> Register </Link></h3>
+                <h3><Link to='/authenticate'> Login </Link></h3>
+                <h3><Link to='/canvas'> Play </Link></h3>
             </div>
+            <img src={process.env.PUBLIC_URL+"explosion.gif"} alt="explosion" width={400} />
             <div className="title">
                 <h1> TypeOrDie </h1>
             </div>               
