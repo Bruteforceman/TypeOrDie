@@ -1,0 +1,41 @@
+.form-container {
+    background-color: black;
+    padding: 1em;
+    padding-right: 2em;
+    width: 30em;
+    color: aliceblue;
+    border: 2px solid white;
+    font-family: 'Quantico', sans-serif;
+}
+.form-container input {
+    font-size: 1.5em;
+    width: 100%;
+    margin: 5px;
+    border: 0;
+    background-color: inherit;
+    border-bottom: 1px solid white;
+    color: white;
+    font-family: 'Quantico', sans-serif;
+}
+.form-container input:focus {
+    outline: none;
+    border-bottom: 2px solid lightblue;
+    margin-bottom: 4px;
+}
+
+.form-container input[type="submit"] {
+    border: 2px solid white;
+    width: 30%;
+    border-radius: 10%;
+    background-color: inherit;
+    font-weight: 700;
+}
+.form-container input[type="submit"]:hover {
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}
+.form-container p {
+    text-align: left;
+    font-size: 1.25em;
+}
