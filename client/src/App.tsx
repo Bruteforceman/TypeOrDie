@@ -4,7 +4,6 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Play from './pages/Play';
 import CanvasGame from './pages/CanvasGame';
-import AuthenticatePage from './pages/Authenticate';
 import { useEffect, useState } from 'react';
 import { User } from './types';
 import { updateUser } from './utilities';
@@ -21,11 +20,10 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path='/' element={ <Home/> } />
+        <Route path='/' element={ <Home user={user} setUser={setUser} /> } />
         <Route path='about' element={ <About /> } />
         <Route path='play' element={ <Play /> } />
         <Route path='canvas' element={ <CanvasGame /> } />
-        <Route path='authenticate' element={ <AuthenticatePage user={user} setUser={setUser} /> } />
       </Routes>
     </div>
   );

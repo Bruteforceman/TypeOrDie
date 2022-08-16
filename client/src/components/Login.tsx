@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FormEvent } from "react"
 import { UserProp } from "../types";
 import { post, updateUser } from "../utilities";
+import "./Form.css";
 
 export default function Login(props : UserProp): JSX.Element {
     const [username, setUsername] = useState('');
@@ -19,7 +20,7 @@ export default function Login(props : UserProp): JSX.Element {
         }).catch(err => console.log(err));
     };
     return (
-        <div>
+        <div className="form-container">
             <p> {message} </p>
             <form onSubmit={handleSubmit}>
                 <input name="username" type="text" onChange={e => setUsername(e.target.value)} placeholder="Username" />

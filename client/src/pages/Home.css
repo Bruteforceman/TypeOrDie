@@ -1,5 +1,5 @@
 
-.title, .explosion {
+.title, .explosion, #login-form, #register-form {
     position: fixed;
     left: 50%;
     top: 50%;
@@ -51,4 +51,8 @@
 .bar a:hover::before {
     transform-origin: left;
     transform: scaleX(1);
+}
+
+#login-form, #register-form {
+    display: none;
 }

@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react"
 import { UserProp } from "../types";
 import { post, updateUser } from "../utilities";
+import "./Form.css"
 
 export default function Register(props : UserProp) : JSX.Element {
     const [username, setUsername] = useState('');
@@ -33,7 +34,7 @@ export default function Register(props : UserProp) : JSX.Element {
     }
 
     return (
-        <div>
+        <div className="form-container">
             <p>{message}</p>
             <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)} />
