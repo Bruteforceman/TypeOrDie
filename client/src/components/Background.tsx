@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import "./Background.css";
 
-const height = window.innerHeight - 0;
-const width = window.innerWidth - 0;
+// const height = window.innerHeight - 0;
+// const width = window.innerWidth - 0;
 const bgColor = 'rgb(0, 0, 0)';
 
 class Star {
@@ -24,7 +24,20 @@ class Star {
     }
 }
 
-function initBackground(ctx : CanvasRenderingContext2D) {
+function useWindowSize() {
+    const [size, setSize] = useState([0, 0]);
+    useLayoutEffect(() => {
+      function updateSize() {
+        setSize([window.innerWidth, window.innerHeight]);
+      }
+      window.addEventListener('resize', updateSize);
+      updateSize();
+      return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    return size;
+}
+
+function initBackground(ctx : CanvasRenderingContext2D, width : number, height : number) {
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, width, height);
     
@@ -56,11 +69,12 @@ function initBackground(ctx : CanvasRenderingContext2D) {
 }
 
 export default function Background() {
+    const [width, height] = useWindowSize();
     useEffect(() => {
         const canvas = document.getElementById("background") as HTMLCanvasElement;
         const context = canvas.getContext('2d') as CanvasRenderingContext2D;
-        return initBackground(context);
-    }, []);
+        return initBackground(context, width, height);
+    }, [width, height]);
     return (
         <canvas id={"background"} height={height} width={width}>
         </canvas>
