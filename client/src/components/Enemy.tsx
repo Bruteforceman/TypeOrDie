@@ -59,6 +59,7 @@ class Enemy {
             this.cur = this.cur.slice(1);
             if (this.cur === "")
                 this.endedTyping = true
+            this.move(2)
         }
         else {
             this.typed = ""
@@ -66,13 +67,13 @@ class Enemy {
 
             this.bullets = [] as Bullet[]
             this.protBuffer = 30;
-            // this.protStart = Date.now();
 
             this.startedTyping = false;
             this.typedFor = 0;
             this.mistyped += 1;
         }
     }
+
     move(dy: number) {
         this.posY -= dy;
     }
@@ -147,7 +148,9 @@ class Enemy {
         if (this.protBuffer > 0) {
             // const x = 
             const color =
-                Math.floor(this.protBuffer / 10) % 2 === 0 ? 'blue' : 'crimson';
+                Math.floor(this.protBuffer / 5) % 2 === 0 ? 'blue' : 'crimson';
+            // enemy will move faster while protBuffer is on
+            this.move(-.7)
             this.texter(this.context, this.typed, this.cur, this.posX, this.posY, color);
 
             // context.fillStyle = "rgba(129, 161, 193, 0.4)"
