@@ -3,17 +3,20 @@ import data from "../components/Data";
 import Bullet from "../components/Bullet";
 import Player from "../components/Player";
 import Enemy from "../components/Enemy";
+import Alien from "./Alien";
 
 const height = Math.max(window.innerHeight, 500);
 const width = Math.max(window.innerWidth, 500);
 let score = 0;
 
 class Game {
+    alienRate = 20
 
     addRandomEnemy(
         enemies: Enemy[],
         context: CanvasRenderingContext2D,
         enemySprite: HTMLElement[],
+        alienSprite: HTMLElement[],
         explosionSprite: HTMLElement[]
     ): void {
         if (document.hidden) {
@@ -27,17 +30,23 @@ class Game {
         while (posX + wordWidth > width - 10 || posX < 10) {
             posX = Math.floor(Math.random() * width);
         }
-        const newEnemy = new Enemy(data[idx], posX, enemySprite, explosionSprite);
+
+        let newEnemy = null
+        const perc = Math.floor(Math.random() * 100)
+        if (perc < this.alienRate) 
+            newEnemy = new Alien(data[idx], posX, alienSprite, explosionSprite, context);
+        else 
+            newEnemy = new Enemy(data[idx], posX, enemySprite, explosionSprite, context);
 
         const buffer = 20;
         const lx = newEnemy.posX - buffer;
-        const rx = newEnemy.posX + newEnemy.getWidth(context) + buffer;
+        const rx = newEnemy.posX + newEnemy.getWidth() + buffer;
         const ly = newEnemy.posY - buffer;
         const ry = newEnemy.posY + newEnemy.getHeight() + buffer;
 
         const closeEnemies = enemies.filter(enemy => {
             const elx = enemy.posX;
-            const erx = enemy.posX + enemy.getWidth(context);
+            const erx = enemy.posX + enemy.getWidth();
             const ely = enemy.posY;
             const ery = enemy.posY + enemy.getHeight();
 
@@ -54,13 +63,12 @@ class Game {
 
     targetEnemy(
         player: Player,
-        enemies: Enemy[],
-        context: CanvasRenderingContext2D
+        enemies: Enemy[]
     ): Enemy | null {
         const inRange = enemies.filter(
             (enemy) => {
                 const enemyLeftX = enemy.posX;
-                const enemyRightX = enemy.posX + enemy.getWidth(context);
+                const enemyRightX = enemy.posX + enemy.getWidth();
                 const playerLeftX = player.posX;
                 const playerRightX = player.posX + player.width;
 
@@ -76,6 +84,7 @@ class Game {
     initGame(context: CanvasRenderingContext2D): () => void {
         const playerSprite = [] as HTMLElement[];
         const enemySprite = [] as HTMLElement[];
+        const alienSprite = [] as HTMLElement[];
         const explosionSprite = [] as HTMLElement[];
 
         // load sprites
@@ -90,6 +99,7 @@ class Game {
             }
         addSprites(4, playerSprite, "player_sprite/frame_", "_delay-0.1s.png")
         addSprites(4, enemySprite, "enemy_sprite/asteroid_", ".png")
+        addSprites(4, alienSprite, "enemy_sprite/frame_", "_delay-0.1s.png")
         addSprites(5, explosionSprite, "explosion_sprite/frame_", "_delay-0.1s.png")
         // end loading
 
@@ -106,7 +116,7 @@ class Game {
             } else if (e.key === 'ArrowLeft') {
                 player.move(-playerSpeed);
             } else if (e.key >= 'a' && e.key <= 'z') {
-                const targetedEnemy = this.targetEnemy(player, enemies, context);
+                const targetedEnemy = this.targetEnemy(player, enemies);
                 if (targetedEnemy !== null) {
                     targetedEnemy.shot(new Bullet(player, targetedEnemy, e.key));
                 }
@@ -135,17 +145,17 @@ class Game {
             // mutableFilter(enemies, (enemy) => !enemy.isDead());
 
             // draw the current enemy in black
-            const head = this.targetEnemy(player, enemies, context);
+            const head = this.targetEnemy(player, enemies);
             const tail = enemies.filter((enemy) => enemy !== head);
 
             if (head !== null) {
                 head.move(-enemySpeed)
-                head.draw(context, 'crimson') // pass in the color of targeted enemy
+                head.draw('crimson') // pass in the color of targeted enemy
             }
             // and the rest in gray
             for (const enemy of tail) {
                 enemy.move(-enemySpeed);
-                enemy.draw(context);
+                enemy.draw();
             }
 
             context.font = '20px CCOverbyteOn';
@@ -166,6 +176,7 @@ class Game {
                     enemies,
                     context,
                     enemySprite,
+                    alienSprite,
                     explosionSprite
                 ),
             2000

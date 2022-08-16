@@ -5,6 +5,7 @@ class Enemy {
     word: string;
     typed: string;
     cur: string;
+    context: CanvasRenderingContext2D;
 
     posX: number;
     posY = 30;
@@ -33,7 +34,8 @@ class Enemy {
         word: string,
         posX: number,
         images: HTMLElement[],
-        explosionImages: HTMLElement[]
+        explosionImages: HTMLElement[],
+        context: CanvasRenderingContext2D,
     ) {
         this.cur = word;
         this.word = word;
@@ -42,6 +44,7 @@ class Enemy {
         this.curLetterX = posX;
         this.images = images;
         this.explosionImages = explosionImages;
+        this.context = context;
     }
     // As the player types, cut off parts of the word
     // If player mistypes a letter, the word respawns
@@ -87,8 +90,8 @@ class Enemy {
         return 20 + 10 + this.imageHeight;
     }
 
-    getWidth(context: CanvasRenderingContext2D) {
-        return context.measureText(this.word).width;
+    getWidth() {
+        return this.context.measureText(this.word).width;
     }
 
     shot(bullet: Bullet) {
@@ -114,15 +117,15 @@ class Enemy {
         return x;
     }
 
-    draw(context: CanvasRenderingContext2D, color: string = 'aliceblue') {
+    draw(color: string = 'aliceblue') {
         if (this.startDeath()) {
             this.deathCounter += 1;
             const src = Math.min(this.explosionImages.length - 1,
                 Math.floor(this.deathCounter / 6));
             const posX = this.posX +
-                this.getWidth(context) / 2 - this.imageWidth / 2;
+                this.getWidth() / 2 - this.imageWidth / 2;
 
-            context.drawImage(
+            this.context.drawImage(
                 this.explosionImages[src] as CanvasImageSource,
                 posX, this.posY, this.imageWidth, this.imageHeight
             );
@@ -130,12 +133,12 @@ class Enemy {
 
             const scr = this.score();
             if (scr > 0) {
-                context.fillStyle = 'rgb(163, 190, 140)';
-                context.fillText("+" + scr.toString(), posX + 30, this.posY);
+                this.context.fillStyle = 'rgb(163, 190, 140)';
+                this.context.fillText("+" + scr.toString(), posX + 30, this.posY);
             }
             else{
-                context.fillStyle = 'crimson';
-                context.fillText(scr.toString(), posX + 30, this.posY);
+                this.context.fillStyle = 'crimson';
+                this.context.fillText(scr.toString(), posX + 30, this.posY);
             }
             return;
         }
@@ -145,27 +148,27 @@ class Enemy {
             // const x = 
             const color =
                 Math.floor(this.protBuffer / 10) % 2 === 0 ? 'blue' : 'crimson';
-            this.texter(context, this.typed, this.cur, this.posX, this.posY, color);
+            this.texter(this.context, this.typed, this.cur, this.posX, this.posY, color);
 
             // context.fillStyle = "rgba(129, 161, 193, 0.4)"
             // context.fillRect(this.posX - 5, this.posY - 35, x - this.posX + 10, 30);
             this.protBuffer -= 1;
         }
         else {
-            this.texter(context, this.typed, this.cur, this.posX, this.posY, color);
+            this.texter(this.context, this.typed, this.cur, this.posX, this.posY, color);
             for (const bullet of this.bullets) {
                 bullet.move();
-                bullet.draw(context);
+                bullet.draw(this.context);
             }
         }
 
         const src = Math.floor(this.curImage / 15);
         const imgX =
-            Math.floor(this.posX + this.getWidth(context) / 2 - this.imageWidth / 2);
+            Math.floor(this.posX + this.getWidth() / 2 - this.imageWidth / 2);
         const imgY =
             Math.floor(this.posY + 10);
         // 10 is the gap between text and spaceship
-        context.drawImage(
+        this.context.drawImage(
             this.images[src] as CanvasImageSource,
             imgX, imgY, this.imageWidth, this.imageHeight
         );
