@@ -23,7 +23,7 @@ function App() {
         <Route path='/' element={ <Home user={user} setUser={setUser} /> } />
         <Route path='about' element={ <About /> } />
         <Route path='play' element={ <Play /> } />
-        <Route path='canvas' element={ <CanvasGame /> } />
+        <Route path='canvas' element={ <CanvasGame user={user} setUser={setUser} /> } />
       </Routes>
     </div>
   );

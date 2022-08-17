@@ -4,6 +4,7 @@ import Bullet from "../components/Bullet";
 import Player from "../components/Player";
 import Enemy from "../components/Enemy";
 import Alien from "./Alien";
+import { User } from "../types";
 
 const height = Math.max(window.innerHeight, 500);
 const width = Math.max(window.innerWidth, 500);
@@ -81,7 +82,7 @@ class Game {
         return inRange.length > 0 ? inRange[0] : null;
     }
 
-    initGame(context: CanvasRenderingContext2D): () => void {
+    initGame(context: CanvasRenderingContext2D, user : User | null): () => void {
         const playerSprite = [] as HTMLElement[];
         const enemySprite = [] as HTMLElement[];
         const alienSprite = [] as HTMLElement[];
@@ -157,10 +158,12 @@ class Game {
                 enemy.move(-enemySpeed);
                 enemy.draw();
             }
+            
+            const username = user === null ? "guest" : user.username;
 
             context.font = '20px CCOverbyteOn';
             context.fillStyle = 'crimson'; // correctly typed part color
-            context.fillText("Score: " + score.toString(), 50, 50);
+            context.fillText("Score: " + score.toString() + " (" + username + ")", 50, 50);
             context.fillText("Lives: " + player.lives.toString(), boardWidth - 150, 50);
         }
 

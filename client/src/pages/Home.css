@@ -54,3 +54,10 @@
 #login-form, #register-form {
     display: none;
 }
+
+.welcome-container {
+    color: orange;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
