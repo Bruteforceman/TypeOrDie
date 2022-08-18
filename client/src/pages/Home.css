@@ -7,11 +7,12 @@
 }
 .explosion {
     transform: translate(-50%, -85%);
+    height: 210px;
+    width: auto;
 }
-
 .title h1 {
     font-family: "CCOverbyteOffW00";
-    font-size: 100px;
+    font-size: 70px;
     color: aliceblue;
 }
 
@@ -60,4 +61,16 @@
     position: fixed;
     top: 0;
     right: 0;
+}
+
+@media only screen and (max-width: 850px) {
+    .explosion {
+        display: none;
+    }
+    .title h1 {
+        font-size: 40px;
+    }
+    .bar h3 {
+        font-size: 1em;
+    }
 }

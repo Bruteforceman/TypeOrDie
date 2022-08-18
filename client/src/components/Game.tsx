@@ -12,7 +12,7 @@ let score = 0;
 
 class Game {
     alienRate = 20
-
+    
     addRandomEnemy(
         enemies: Enemy[],
         context: CanvasRenderingContext2D,
@@ -82,11 +82,29 @@ class Game {
         return inRange.length > 0 ? inRange[0] : null;
     }
 
+    drawHealth(context : CanvasRenderingContext2D, health : number, heartImage : HTMLElement) {
+        
+        const len = 120;
+        const rem = Math.floor(len * health / 180);
+        const offset = 40;
+        const y = 35;
+
+        context.strokeStyle = 'red';
+        roundRect(context, width - len - offset, y, len, 20, 5);
+
+        context.fillStyle = 'rgb(255, 68, 51)';
+        roundRect(context, width - len - offset, y, rem, 20, {tl : 5, bl : 5, tr : 0, br : 0}, true, false);
+
+        context.drawImage(heartImage as CanvasImageSource, width - len - offset - 30, y - 5, 30, 30);
+    }
+
     initGame(context: CanvasRenderingContext2D, user : User | null): () => void {
         const playerSprite = [] as HTMLElement[];
         const enemySprite = [] as HTMLElement[];
         const alienSprite = [] as HTMLElement[];
         const explosionSprite = [] as HTMLElement[];
+        const heartImage = new Image();
+        heartImage.src = process.env.PUBLIC_URL + 'heart.png';
 
         // load sprites
         const addSprites =
@@ -130,13 +148,25 @@ class Game {
                 enemy.scoreAdded = true
                 if (player.collide(enemy))
                     player.takeLife()
+                if(enemy.cur.length === 0) { // successfully typed the word
+                    player.health += enemy instanceof Alien ? 10 : 1;
+                }
             }
+            player.health = Math.min(180, player.health);
+            player.health = Math.max(0, player.health);
             return !enemy.isDead()
         }
 
         const animate = () => {
             if (document.hidden) {
                 return; // makes sure we don't render the game if the tab is closed
+            }
+            if(player.health <= 0) {
+                context.font = '70px CCOverbyteOn';
+                context.fillStyle = 'white';
+                const textWidth = context.measureText('Game Over').width;
+                context.fillText('Game Over', Math.floor((width - textWidth) / 2), Math.floor(height / 2));
+                return ;
             }
             context.clearRect(0, 0, width, height);
             player.draw();
@@ -162,9 +192,11 @@ class Game {
             const username = user === null ? "guest" : user.username;
 
             context.font = '20px CCOverbyteOn';
-            context.fillStyle = 'crimson'; // correctly typed part color
-            context.fillText("Score: " + score.toString() + " (" + username + ")", 50, 50);
-            context.fillText("Lives: " + player.lives.toString(), boardWidth - 150, 50);
+            context.fillStyle = 'lightgreen'; // correctly typed part color
+            context.fillText("Score: " + score + " (" + username + ")", 50, 50);
+            // context.fillText("Health: " + player.health, boardWidth - 150, 50);
+            
+            this.drawHealth(context, player.health, heartImage);
         }
 
         // the numbers here should be determined by the difficulty level
@@ -184,6 +216,10 @@ class Game {
                 ),
             2000
         );
+        
+        const healthTimer = setInterval(() => {
+            player.health -= 1;
+        }, 1000);
 
         window.addEventListener('keydown', keyHandler);
 
@@ -192,9 +228,46 @@ class Game {
             window.removeEventListener('keydown', keyHandler);
             clearInterval(animationTimer);
             clearInterval(enemyTimer);
+            clearInterval(healthTimer);
         };
     }
 }
+
+
+function roundRect(
+    ctx : CanvasRenderingContext2D,
+    x : number,
+    y : number,
+    width : number,
+    height : number,
+    radius : {tl : number, tr: number, bl: number, br: number} | number,
+    fill = false,
+    stroke = true
+  ) {
+    if (typeof radius === 'number') {
+      radius = {tl: radius, tr: radius, br: radius, bl: radius};
+    } else {
+      radius = {...{tl: 0, tr: 0, br: 0, bl: 0}, ...radius};
+    }
+    ctx.beginPath();
+    ctx.moveTo(x + radius.tl, y);
+    ctx.lineTo(x + width - radius.tr, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+    ctx.lineTo(x + width, y + height - radius.br);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+    ctx.lineTo(x + radius.bl, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+    ctx.lineTo(x, y + radius.tl);
+    ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+    ctx.closePath();
+    if (fill) {
+      ctx.fill();
+    }
+    if (stroke) {
+      ctx.stroke();
+    }
+}
+
 
 export const boardHeight = height;
 export const boardWidth = width;

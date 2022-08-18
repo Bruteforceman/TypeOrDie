@@ -12,7 +12,7 @@ class Player {
     // 0 stands for normal, negative directon for left move, positive direction for
     // right move
 
-    lives = 5;
+    health = 180
     lostLife = false;
     lifeBuffer = 0;
 
@@ -64,7 +64,7 @@ class Player {
     }
 
     takeLife() {
-        this.lives -= 1;
+        this.health -= 10;
         this.lostLife = true;
     }
 }

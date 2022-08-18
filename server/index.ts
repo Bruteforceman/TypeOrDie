@@ -7,7 +7,7 @@ import session from 'express-session';
 dotenv.config();  // imports .env configs
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 
 // this should go into process.ENV
 const dbUser = process.env.DB_USER as string;
