@@ -171,7 +171,7 @@ class Game {
                     put("/api/topscore", {
                         "username": user.username,
                         "top_score": score
-                    }).then(res => console.log(res));
+                    })
 
 
                 return ;
