@@ -1,5 +1,5 @@
 import data from "../components/Data";
-
+import { put } from "../utilities";
 import Bullet from "../components/Bullet";
 import Player from "../components/Player";
 import Enemy from "../components/Enemy";
@@ -166,6 +166,14 @@ class Game {
                 context.fillStyle = 'white';
                 const textWidth = context.measureText('Game Over').width;
                 context.fillText('Game Over', Math.floor((width - textWidth) / 2), Math.floor(height / 2));
+
+                if(user !== null)
+                    put("/api/topscore", {
+                        "username": user.username,
+                        "top_score": score
+                    }).then(res => console.log(res));
+
+
                 return ;
             }
             context.clearRect(0, 0, width, height);
@@ -218,7 +226,7 @@ class Game {
         );
         
         const healthTimer = setInterval(() => {
-            player.health -= 1;
+            player.health -= 10;
         }, 1000);
 
         window.addEventListener('keydown', keyHandler);

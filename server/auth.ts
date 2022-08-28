@@ -27,7 +27,8 @@ export async function registerUser(req : Request, res : Response) {
     const newUser = new User ({
         username: username,
         password: hashedPassword,
-        email: email
+        email: email,
+        top_score: 0
     });
     newUser.save().then(() => {
         req.session.username = username;
@@ -57,5 +58,17 @@ export function ensureLoggedIn(req : Request, res : Response, next : NextFunctio
         next();
     } else {
         res.json({ success: false, message: 'You must be logged in to access this page' });
+    }
+}
+
+export async function updatetopscore(req: Request, res: Response){
+    const username = req.body.username;
+    const user = await User.findOne({ username: username });
+    if(user !== null){ 
+        if(req.body.top_score > user.top_score){     
+            user.top_score = req.body.top_score;
+            user.save();
+        }
+        res.json({ success: true, message: `Updated top score` });
     }
 }

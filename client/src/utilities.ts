@@ -65,6 +65,19 @@ export function post(endpoint : string, params: any = {}) {
   });
 }
 
+export function put(endpoint : string, params: any = {}) {
+  return fetch(endpoint, {
+    method: "put",
+    headers: { "Content-type": "application/json" },
+    body: JSON.stringify(params),
+  })
+  .then(convertToJSON) // convert result to JSON object
+  .catch((error) => {
+    // give a useful error message
+    throw new Error(`PUT request to ${endpoint} failed with error:\n${error}`);
+  });
+}
+
 // this function should be called after login/register 
 // or any other cases where user is potentially updated
 // it should return a appropriate message (possibly error msg)

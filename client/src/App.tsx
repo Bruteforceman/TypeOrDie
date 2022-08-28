@@ -7,6 +7,7 @@ import CanvasGame from './pages/CanvasGame';
 import { useEffect, useState } from 'react';
 import { User } from './types';
 import { updateUser } from './utilities';
+import LeaderBoard from './pages/LeaderBoard';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
     <div className="App">
       <Routes>
         <Route path='/' element={ <Home user={user} setUser={setUser} /> } />
+        <Route path='leader' element={ <LeaderBoard /> } />
         <Route path='about' element={ <About /> } />
         <Route path='play' element={ <Play /> } />
         <Route path='canvas' element={ <CanvasGame user={user} setUser={setUser} /> } />

@@ -17,7 +17,8 @@ export default function Register(props : UserProp) : JSX.Element {
             post('/api/register', {
                 'username': username,
                 'email': email,
-                'password': password
+                'password': password,
+                'top_score': 0
             }).then(data => {
                 const success = data.success as boolean;
                 if(success) {
