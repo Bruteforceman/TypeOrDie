@@ -22,7 +22,6 @@ connect(mongoURI).then(() => {
 }).catch(err => console.log(err));
 
 
-
 // extending express-session
 
 declare module 'express-session' { // not sure why module works but namespace doesn't
@@ -44,7 +43,7 @@ app.use(session(
 
 app.use('/api', api);
 
-const reactPath = path.resolve(__dirname, '..', '..', 'client', 'build');
+const reactPath = path.resolve(__dirname, '..', 'client', 'build');
 app.use(express.static(reactPath));
 console.log(reactPath);
 
