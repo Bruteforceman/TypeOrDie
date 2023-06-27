@@ -4,11 +4,9 @@
   "description": "**Note:** The project was previously deployed to Heroku. Recently we decided to shift it to AWS. Currently the project has been dockerized. Now looking towards deploying to AWS.",
   "main": ".eslintrc.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cd server && node dist/index.js",
     "start": "cd server && node dist/index.js",
-    "prebuild": "cd server && tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "cd server && tsc --project .",
-    "build-prod": "cd client && npm install && npm run build && cd .. && cd server && npm install && npm run build",
+    "build": "cd client && npm install && npm run build && cd .. && cd server && npm install && npm run build",
     "server": "cd server && nodemon --verbose --watch \"server\" --ext \"ts,json\" --exec ts-node server/index.ts",
     "client": "cd client && npm start && cd ..",
     "dev": "concurrently \"npm run client\" \"npm run server\""
