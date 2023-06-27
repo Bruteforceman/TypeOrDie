@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { connect } from 'mongoose';
 import api from "./api";
 import session from 'express-session';
+import path from 'path';
 
 dotenv.config();  // imports .env configs
 
@@ -19,6 +20,7 @@ const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.cvhon.mongodb.n
 connect(mongoURI).then(() => {
   console.log('Connected to MongoDB');
 }).catch(err => console.log(err));
+
 
 
 // extending express-session
@@ -42,8 +44,12 @@ app.use(session(
 
 app.use('/api', api);
 
-app.get('/', (req, res) => {
-  res.send('Welcome to TypeOrDie')
+const reactPath = path.resolve(__dirname, '..', '..', 'client', 'build');
+app.use(express.static(reactPath));
+console.log(reactPath);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(reactPath, "index.html"))
 });
 
 app.listen(port, () => {
