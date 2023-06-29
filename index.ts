@@ -11,16 +11,19 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 // this should go into process.ENV
-const dbUser = process.env.DB_USER as string;
-const dbPassword = process.env.DB_PASSWORD as string;
+const dbUser = process.env.DB_USER ?? '';
+const dbPassword = process.env.DB_PASSWORD ?? '';
 
 const dbName = 'TypeOrDie';
 const mongoURI = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.cvhon.mongodb.net/${dbName}?retryWrites=true&w=majority`;
 
+console.log(`db user ${dbUser} password ${dbPassword}`); 
+
+/*
 connect(mongoURI).then(() => {
   console.log('Connected to MongoDB');
 }).catch(err => console.log(err));
-
+*/
 
 // extending express-session
 
